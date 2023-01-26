@@ -118,7 +118,15 @@ ol {
 }
 
 .info-item{
+  /* outline: 1px solid tomato; */
   text-align: center;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  display: flex;
+}
+
+.info-title{
 }
 
 /* ******** */

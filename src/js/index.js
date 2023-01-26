@@ -21,36 +21,36 @@ const searchForm = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreButton = document.querySelector('.load-more');
 
-let myQuery = '';
-let myPage;
+let apiSearch = '';
+let apiPage = 0;
+
 
 // // Ф. генеруэ HTML рзмітку галереї
 import { createGallEryList } from './gallery-list';
 
 // // API для пошуку зображень, публічний сервіс Pixabay
-import { request } from './pixabay';
+import { requestApi } from './pixabay';
 
 // обробляю відповідь бекенду
-const requestFunction = async () => {
+const runSearsh = async (apiSearch, apiPage) => {
   try {
-    const req = await request(myQuery, myPage);
+    const req = await requestApi(apiSearch, apiPage);
     // console.log('req*', req);
-    run(req);
+    runAction(req);
   } catch (err) {
     console.log(err);
   }
 };
 
 // // логіка:
-function run(response) {
-  // масив який повертає бекенд
+function runAction(response) {
+  // // масив елементів який повертає бекенд
   const items = response.data.hits;
+  // // всього елементів
   const totalHits = response.data.totalHits;
   // console.log('response*', response);
-  // console.log('req*', req);
-  // console.log('ARR items', items);
 
-  // Повідомлення: якщо бекенд повертає порожній масив
+  // Повідомлення: якщо бекенд повертає []
   if (items.length === 0) {
     console.log('Array length 0');
 
@@ -60,25 +60,26 @@ function run(response) {
     return;
   }
 
-  // якщо бекенд повертає повний масив: створюю галерею
+  // якщо бекенд повертає масив елементів створюю галерею
   gallery.insertAdjacentHTML('beforeend', createGallEryList(items));
   // і відображаю кнопку пагінації
   loadMoreButton.classList.remove('is-hidden');
 
   // Повідомлення: при першій видачі пошукового запросу показати загаьну кількість сторінок
-  if ((myPage = 1)) {
+  if ( apiPage = 1) {
     Notiflix.Notify.success(`Hooray! We found totalHits ${totalHits} images.`);
   }
 
   // Повідомлення: перевірити чи це не остання сторінка видачі, якщо остання показати повідомлення і приховати кнопку
-  if (totalHits / 40 < myPage + 1) {
+  if (totalHits / 40 < apiPage + 1) {
     Notiflix.Notify.info(
       `We're sorry, but you've reached the end of search results.`
     );
-    // * приховати кнопку пагынації
+    // * приховати кнопку пагінації
   loadMoreButton.classList.add('is-hidden');
   }
 }
+
 
 // // Ловлю подію в формі пошуку і відправляю пошуковий запрос на бекенд
 searchForm.addEventListener('submit', e => {
@@ -86,17 +87,24 @@ searchForm.addEventListener('submit', e => {
   e.preventDefault();
 
   // виймаю пошуковий запрос з події
-  myQuery = e.target.querySelector('input').value;
-  myPage = 1;
+  apiSearch = e.target.value;
+  apiPage = 1;
+  console.log('apiPage форма', apiPage);
 
   // видаляю галерею
   gallery.innerHTML = '';
+
   // відправляю пошуковий запрос на бекенд
-  requestFunction();
+  runSearsh(apiSearch, apiPage);
+  
+  // // очищюю форму
+  e.currentTarget.reset();
 });
 
 // // Ловлю подію клік на кн. "load More" і відправляю запрос на бекенд
 loadMoreButton.addEventListener('click', e => {
-  myPage += 1;
-  requestFunction();
+  console.log('apiPage Ще1', apiPage);
+  apiPage = apiPage + 1;
+  console.log('apiPage Ще2', apiPage);
+  runSearsh(apiSearch, apiPage);
 });
