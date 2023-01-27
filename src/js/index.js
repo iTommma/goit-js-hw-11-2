@@ -75,7 +75,7 @@ function runAction(response) {
   }
 
   // Повідомлення: перевірити чи це не остання сторінка видачі, якщо остання показати повідомлення і приховати кнопку
-  if (totalHits / 40 < apiPage + 1) {
+  if (totalHits / 40 < apiPage) {
     Notiflix.Notify.info(
       `We're sorry, but you've reached the end of search results.`
     );
