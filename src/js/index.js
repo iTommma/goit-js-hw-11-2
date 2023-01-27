@@ -24,18 +24,19 @@ const loadMoreButton = document.querySelector('.load-more');
 let apiSearch = '';
 let apiPage = 0;
 
-
 // // Ф. генеруэ HTML рзмітку галереї
 import { createGallEryList } from './gallery-list';
 
 // // API для пошуку зображень, публічний сервіс Pixabay
 import { requestApi } from './pixabay';
 
-// обробляю відповідь бекенду
-const runSearsh = async (apiSearch, apiPage) => {
+
+// // Обробляю відповідь бекенду
+const runSearsh = async (apiSearch, page) => {
   try {
-    const req = await requestApi(apiSearch, apiPage);
-    // console.log('req*', req);
+    const req = await requestApi(apiSearch, page);
+    console.log('2 runSearsh page', page);
+
     runAction(req);
   } catch (err) {
     console.log(err);
@@ -66,7 +67,7 @@ function runAction(response) {
   loadMoreButton.classList.remove('is-hidden');
 
   // Повідомлення: при першій видачі пошукового запросу показати загаьну кількість сторінок
-  if ( apiPage = 1) {
+  if ( apiPage === 1) {
     Notiflix.Notify.success(`Hooray! We found totalHits ${totalHits} images.`);
   }
 
@@ -82,14 +83,17 @@ function runAction(response) {
 
 
 // // Ловлю подію в формі пошуку і відправляю пошуковий запрос на бекенд
-searchForm.addEventListener('submit', e => {
+searchForm.addEventListener("submit", handleSubmit);
+
+function handleSubmit(e) {
   // прибираю оновлення сторінки при сабміті
   e.preventDefault();
 
   // виймаю пошуковий запрос з події
-  apiSearch = e.target.value;
+  apiSearch = searchForm.children.searchQuery.value;
+  console.log('1 searchForm apiPage до = 1', apiPage);
   apiPage = 1;
-  console.log('apiPage форма', apiPage);
+  console.log('1 searchForm apiPage після = 1', apiPage);
 
   // видаляю галерею
   gallery.innerHTML = '';
@@ -99,12 +103,12 @@ searchForm.addEventListener('submit', e => {
   
   // // очищюю форму
   e.currentTarget.reset();
-});
+};
 
 // // Ловлю подію клік на кн. "load More" і відправляю запрос на бекенд
 loadMoreButton.addEventListener('click', e => {
-  console.log('apiPage Ще1', apiPage);
-  apiPage = apiPage + 1;
-  console.log('apiPage Ще2', apiPage);
+  console.log('1 loadMore apiPage до збільшення', apiPage);
+  apiPage += 1;
+  console.log('1 loadMore apiPage після збільшення', apiPage);
   runSearsh(apiSearch, apiPage);
 });
