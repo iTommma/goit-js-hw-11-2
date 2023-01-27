@@ -91,9 +91,13 @@ function handleSubmit(e) {
 
   // виймаю пошуковий запрос з події
   apiSearch = searchForm.children.searchQuery.value;
-  console.log('1 searchForm apiPage до = 1', apiPage);
+  if (apiSearch.length < 1) {
+    Notiflix.Notify.failure(
+      'Please enter a keyword.'
+    );
+    return
+  }
   apiPage = 1;
-  console.log('1 searchForm apiPage після = 1', apiPage);
 
   // видаляю галерею
   gallery.innerHTML = '';
@@ -107,8 +111,6 @@ function handleSubmit(e) {
 
 // // Ловлю подію клік на кн. "load More" і відправляю запрос на бекенд
 loadMoreButton.addEventListener('click', e => {
-  console.log('1 loadMore apiPage до збільшення', apiPage);
   apiPage += 1;
-  console.log('1 loadMore apiPage після збільшення', apiPage);
   runSearsh(apiSearch, apiPage);
 });
