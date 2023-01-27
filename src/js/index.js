@@ -40,6 +40,9 @@ const runSearsh = async (apiSearch, page) => {
     runAction(req);
   } catch (err) {
     console.log(err);
+    Notiflix.Notify.failure(
+      'Sorry, ' + err
+    );
   }
 };
 
@@ -90,7 +93,7 @@ function handleSubmit(e) {
   e.preventDefault();
 
   // виймаю пошуковий запрос з події
-  apiSearch = searchForm.children.searchQuery.value;
+  apiSearch = searchForm.children.searchQuery.value.trim();
   if (apiSearch.length < 1) {
     Notiflix.Notify.failure(
       'Please enter a keyword.'
